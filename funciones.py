@@ -9,7 +9,7 @@ def create_txt():
   while len(name) == 0:
     print("¡El archivo debe tener nombre!")
     name = input("De un nombre para su archivo: ")
-  with open(name, 'wb') as file:
+  with open(name, 'w') as file:
         file.write(texto)
 
 #Función que convierte el archivo .txt del usuario a un archivo .bin para poder procesarlo.

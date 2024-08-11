@@ -39,15 +39,30 @@ def str_to_bin(text):
 
 #Función que estima el peso de un archivo y define en cuantas tramas se dividirá
 def file_size(file_name):
+  data_size = file_size = os.path.getsize(file_name)
+  segmentos = data_size/1024
   with open(file_name, 'r') as data:
     text_data = data.read()
     data = [text_data[i:i + 8] for i in range(0, len(text_data), 8)]
-    size = len(data)
-    return size,data
+    return segmentos,data
+
 
 #Función que separa el archivo .bin en segmentos más pequeños para poder simular la segmentación del proceso TCP/IP
 #Se asume que el dispositivo que se tiene solo puede enviar maximo 1024 bits y se tiene que dividir el archivo en la cantidad
 #de segmentos necesarios para satisfacer los requerimientos.
+
+def segmentos(file_name):
+   seg,data= file_size(file_name)
+   i = 0
+   while i < len(data):
+      if (i+8) < len(data):
+        segmento = "".join(data[i:i+8])
+        i += 9
+      else:
+        segmento = "".join(data[i:])
+   head = "" #aqui se deberia llamar a la funcion que genera el header
+   segmento = head + segmento
+   return segmento
 
 #funcion checksum para verificaciones 
 def checksum(file_name):

@@ -49,5 +49,6 @@ def file_size(file_name):
 #Se asume que el dispositivo que se tiene solo puede enviar maximo 1024 bits y se tiene que dividir el archivo en la cantidad
 #de segmentos necesarios para satisfacer los requerimientos.
 
-
-
+#funcion checksum para verificaciones 
+def checksum(file_name):
+   return print("hola")

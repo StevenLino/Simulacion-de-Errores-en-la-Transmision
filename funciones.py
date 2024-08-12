@@ -1,3 +1,5 @@
+import os
+import random
 #Aquí se crearan las funciones para la simulacion de errores y envio de datos al servidor
 
 #Funcion para crear archivos txt con la información del usuario
@@ -95,3 +97,30 @@ def validar_checksum(datos, checksum_recibido):
     
   #se compara los checksum y retorna true o false
   return checksum_calculado == checksum_recibido
+
+#Función que simula un envío fuera de orden, se envía la lista de segmentos
+def simularErrorFueraOrden (segmentos):
+   return random.shuffle (segmentos)
+
+# Función que simula la pérdida de paquetes aleatoria, donde existe un 10% de probabilidad de que un paquete se pierda.
+def simularErrorPerdidaPaquetes (segmentos):
+   return [segmento for segmento in segmentos if random.random() > 0.1]
+
+#Función que simula un cambio de bits del mensaje
+def simularCambioBit (segmentos):
+  for i in range (len(segmentos)):
+      
+    #Se da un 10% de posibilidad de que exista uno o varios cambios de bits en un segmento
+    if random.random() < 0.1:
+        segmento = bytearray(segmentos[i])
+
+        #Se asume que se pueda realizar un cambio de bit de entre una y cinco veces
+        for c in range (random.randint (1, 5)):
+
+          #Se selecciona una posición cualquiera para cambiar un bit
+          posicion_cambio_bit = random.randint (0, len(segmento) - 1)
+
+        #Se invierte el bit en la posición dada
+        segmento [posicion_cambio_bit] ^= 0xFF
+
+  return segmentos

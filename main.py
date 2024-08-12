@@ -1,4 +1,4 @@
-#Aqui estará el programa primcipal que usará las funciones del archivo def.pv y los documentos en este repositorio
+#Aqui estará el programa principal que usará las funciones del archivo def.pv y los documentos en este repositorio
 import funciones as fd
 
 fd.create_txt()

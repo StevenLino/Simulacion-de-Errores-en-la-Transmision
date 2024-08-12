@@ -67,7 +67,7 @@ def segmentos(file_name):
 #funcion que permite calcular el checksum del segmento de datos
 def calcularChecksum(datos):
    
-   #tener en cuenta que la longitud de datos sea par, caso contrario, agregar un byte de padding
+  #tener en cuenta que la longitud de datos sea par, caso contrario, agregar un byte de padding
   if len(datos) % 2 != 0:
     datos += b'\x00'
   
@@ -90,8 +90,8 @@ def calcularChecksum(datos):
 # funcion que valida los checksum, el del mensaje y el que se genera
 def validar_checksum(datos, checksum_recibido):
     
-    #Se calcula el checksum del mensaje
-    checksum_calculado = calcularChecksum(datos)
+  #Se calcula el checksum del mensaje
+  checksum_calculado = calcularChecksum(datos)
     
-    #se compara los checksum y retorna true o false
-    return checksum_calculado == checksum_recibido
+  #se compara los checksum y retorna true o false
+  return checksum_calculado == checksum_recibido

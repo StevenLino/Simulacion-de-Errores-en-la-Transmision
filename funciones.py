@@ -64,6 +64,34 @@ def segmentos(file_name):
    segmento = head + segmento
    return segmento
 
-#funcion checksum para verificaciones 
-def checksum(file_name):
-   return print("hola")
+#funcion que permite calcular el checksum del segmento de datos
+def calcularChecksum(datos):
+   
+   #tener en cuenta que la longitud de datos sea par, caso contrario, agregar un byte de padding
+  if len(datos) % 2 != 0:
+    datos += b'\x00'
+  
+
+  suma = 0
+
+  for i in range(0, len(datos), 2):
+    #Combinar dos bytes en una palabra de 16 bits
+    palabra_16bits = (datos[i] << 8) + datos[i + 1]
+    suma += palabra_16bits
+        
+    #Añadir el acarreo si la suma es mayor que 0xFFFF
+    suma = (suma & 0xFFFF) + (suma >> 16)
+
+  #se toma el complemento a 1
+  checksum = ~suma & 0xFFFF
+    
+  return checksum
+
+# funcion que valida los checksum, el del mensaje y el que se genera
+def validar_checksum(datos, checksum_recibido):
+    
+    #Se calcula el checksum del mensaje
+    checksum_calculado = calcularChecksum(datos)
+    
+    #se compara los checksum y retorna true o false
+    return checksum_calculado == checksum_recibido

@@ -6,5 +6,5 @@ print("_"*len(welcome))
 name = fd.create_txt()
 name = name.split(".")[0]
 fd.txt_to_bin(name+".txt",name+".bin")
-d= fd.file_size("hola.bin")
+d= fd.file_size(name+".bin")
 print(d)

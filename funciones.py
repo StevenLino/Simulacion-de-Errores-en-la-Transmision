@@ -34,6 +34,18 @@ def txt_to_bin(input_txt_path, output_bin_path):
     with open(output_bin_path, 'w') as bin_file:
         bin_file.write(binario)
 
+
+#Esta funcion crear un texto a binario, si la opcion es 0 sabra que es una ip y quitara los . del texto recibido
+def create_binary(o,dato):
+    if o == 0:
+       num =dato.split(".")
+       binario = "".join([format(i,"08b") for i in num])
+    else:
+       binary_data = dato.encode('utf-8')
+       binario = ''.join(format(byte, '08b') for byte in binary_data)
+       return binario
+
+
 #Funcion que convierte texto a binario
 def str_to_bin(text):
    binary_data = text.encode('utf-8')
@@ -48,8 +60,7 @@ def file_size(file_name):
     text_data = data.read()
     data = [text_data[i:i + 8] for i in range(0, len(text_data), 8)]
     return segmentos,data
-
-
+  
 #Función que separa el archivo .bin en segmentos más pequeños para poder simular la segmentación del proceso TCP/IP
 #Se asume que el dispositivo que se tiene solo puede enviar maximo 1024 bits y se tiene que dividir el archivo en la cantidad
 #de segmentos necesarios para satisfacer los requerimientos.
@@ -98,6 +109,12 @@ def validar_checksum(datos, checksum_recibido):
     
   #se compara los checksum y retorna true o false
   return checksum_calculado == checksum_recibido
+
+#Funcion que genera el Header + Trama
+def t_header(oip,dip,sec,trama):
+   sport= create_binary(0,oip)
+   dport=create_binary(0,dip)
+   check = calcularChecksum(trama)
 
 #Función que simula un envío fuera de orden, se envía la lista de segmentos
 def simularErrorFueraOrden (segmentos):

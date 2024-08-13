@@ -13,6 +13,7 @@ def create_txt():
     name = input("De un nombre para su archivo: ")
   with open(name, 'w') as file:
         file.write(texto)
+  return name
 
 #Función que convierte el archivo .txt del usuario a un archivo .bin para poder procesarlo.
 #Los archivos .bin son un tipo de archivo que contine informacion en formato binario.

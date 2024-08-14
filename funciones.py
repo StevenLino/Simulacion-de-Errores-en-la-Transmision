@@ -112,9 +112,16 @@ def validar_checksum(datos, checksum_recibido):
 
 #Funcion que genera el Header + Trama
 def t_header(oip,dip,sec,trama):
+   #los datos hay que convertirlos a binario
    sport= create_binary(0,oip)
    dport=create_binary(0,dip)
    check = calcularChecksum(trama)
+   sec_bin = format(sec,"032b")
+
+   #formato del header 
+   header= sport + dport + sec_bin + check
+   
+   return header
 
 #Función que simula un envío fuera de orden, se envía la lista de segmentos
 def simularErrorFueraOrden (segmentos):
@@ -142,3 +149,30 @@ def simularCambioBit (segmentos):
         segmento [posicion_cambio_bit] ^= 0xFF
 
   return segmentos
+
+## alternatva a discutur para el método de segmentos
+
+#def segmentos(file_name, oip, dip):
+#   seg, data = file_size(file_name)
+#   segmentos = []
+#   sec = 0  # Inicializa el número de secuencia
+   
+#   for i in range(0, len(data), 8):
+#       if (i + 8) < len(data):
+#           segmento = "".join(data[i:i + 8])
+#       else:
+#           segmento = "".join(data[i:])
+       
+       # Calcula el checksum para el segmento
+#       checksum = calcularChecksum(segmento.encode('utf-8'))
+       
+       # Genera el header
+#       header = t_header(oip, dip, sec, checksum)
+       
+       # Combina el header con el segmento
+#       segmentos.append(header + segmento)
+       
+       # Incrementa el número de secuencia
+#       sec += 1
+   
+#   return segmentos

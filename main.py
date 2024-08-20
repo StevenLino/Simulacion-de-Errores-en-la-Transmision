@@ -9,4 +9,7 @@ name = fd.create_txt()
 name = name.split(".")[0]
 fd.txt_to_bin(name+".txt",name+".bin")
 #seg,data= fd.file_size(name+".bin")
-print(fd.segmentos(oip,dip,name+".bin"))
+g = fd.segment(oip,dip,name+".bin")
+print(g)
+for i in g:
+    print(fd.bin_to_str(i[:240]))

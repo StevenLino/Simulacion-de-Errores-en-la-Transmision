@@ -40,7 +40,8 @@ def txt_to_bin(input_txt_path, output_bin_path):
 def create_binary(o,dato):
     if o == 0:
        num = dato.split(".")
-       binario = "".join([format(int(i),"08b") for i in num])
+       num2 = [i.encode('utf-8') for i in num]
+       binario = "".join([format(i,"08b") for i in num2])
        return binario
     else:
        binary_data = dato.encode('utf-8')
@@ -50,6 +51,8 @@ def create_binary(o,dato):
 
 #Funcion que convierte texto a binario
 def str_to_bin(text):
+   if type(text) == int:
+      text = str(text)
    binary_data = text.encode('utf-8')
    binario = ''.join(format(byte, '08b') for byte in binary_data)
    return binario
@@ -98,7 +101,7 @@ def calcularChecksum(datos):
   checksum = ~suma & 0xFFFF
 
    # Convertir el checksum a binario de 16 bits
-  checksum_binario = format(checksum, '016b')
+  checksum_binario = str_to_bin(checksum)#format(checksum, '016b')
   print(checksum_binario)  
   return checksum_binario
 
@@ -114,13 +117,14 @@ def validar_checksum(datos, checksum_recibido):
 #Funcion que genera el Header + Trama
 def t_header(oip,dip,sec,trama):
    #los datos hay que convertirlos a binario
-   sport= create_binary(0,oip)
-   dport= create_binary(0,dip)
+   sport= create_binary(1,oip)
+   dport= create_binary(1,dip)
    check = calcularChecksum(trama)
-   sec_bin = format(int(sec),"08b")
+   sec_bin = str_to_bin(str(sec)) #format(sec,"08b")
 
    #formato del header 
    header= sport + dport + str(sec_bin) + str(check)
+   print(len(header))
    
    return header
 
@@ -138,6 +142,7 @@ def segmentos(oip,dip,file_name):
    if len(data) > 1024:
     for i in range(seg): 
       lista = [h for h in range(0,len(data),1024)]
+      print(lista)
       for j in lista:
           if (j+1023) < len(data):
             segmento = "".join(data[j:j+1023])
@@ -155,6 +160,48 @@ def segmentos(oip,dip,file_name):
    
    #print(segmento)
    return info
+
+def segment(oip, dip, file_name):
+    seg, data = file_size(file_name)
+    seg = math.floor(seg) + 1
+    info = []
+
+    # Verifica el tamaño de los datos y su estructura
+    print(f"Tamaño de los datos: {len(data)}")
+    print(f"Número de segmentos calculados: {seg}")
+    
+    # Si los datos tienen más de 1024 bytes, los segmentamos
+    if len(data) > 1024:
+        for j in range(0, len(data), 1024):
+            if (j + 1024) <= len(data):
+                segmento = "".join(data[j:j + 1024])
+            else:
+                segmento = "".join(data[j:])
+
+            # Generar el encabezado para el segmento
+            head = t_header(oip, dip, j // 1024, segmento)
+            
+            # Verificar el contenido del segmento y el encabezado
+            print(f"Segmento {j // 1024}: {segmento}")
+            print(f"Encabezado {j // 1024}: {head}")
+            
+            # Agregar el segmento + encabezado a la lista info
+            info.append(head + segmento)
+    
+    else:
+        segmento = "".join(data)
+        head = t_header(oip, dip, 0, segmento)
+        
+        # Verificar el contenido del único segmento
+        print(f"Segmento único: {segmento}")
+        print(f"Encabezado único: {head}")
+        
+        info.append(head + segmento)
+
+    # Verificar el contenido de la lista final
+    print(f"Contenido de la lista info (número de elementos): {len(info)}")
+    return info
+
    
 #Función que simula un envío fuera de orden, se envía la lista de segmentos
 def simularErrorFueraOrden (segmentos):

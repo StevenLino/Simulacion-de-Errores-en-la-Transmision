@@ -132,25 +132,29 @@ def segmentos(oip,dip,file_name):
    seg,data= file_size(file_name)
    i = 0
    seg = math.floor(seg) + 1
-   segmento = ""
-   head = ""
+   #segmento = ""
+   #head = ""
    info = []
    if len(data) > 1024:
     for i in range(seg): 
       lista = [h for h in range(0,len(data),1024)]
-      print(lista)
       for j in lista:
           if (j+1023) < len(data):
             segmento = "".join(data[j:j+1023])
           else:
             segmento = "".join(data[j:])
+      head = t_header(oip,dip,i,segmento)#aqui se deberia llamar a la funcion que genera el header
+      segmento = head + segmento
+      info.append(segmento)
+      segmento= ""
    else:
-    segmento = "".join(data[:])  
-   head = t_header(oip,dip,i,segmento)#aqui se deberia llamar a la funcion que genera el header
-   segmento = head + segmento
+    segmento = "".join(data[:])
+    info.append(segmento)
+    head = t_header(oip,dip,i,segmento)#aqui se deberia llamar a la funcion que genera el header
+    segmento = head + segmento
+   
    #print(segmento)
-   info.append(segmento)
-   return segmento
+   return info
    
 #Función que simula un envío fuera de orden, se envía la lista de segmentos
 def simularErrorFueraOrden (segmentos):

@@ -11,5 +11,6 @@ fd.txt_to_bin(name+".txt",name+".bin")
 #seg,data= fd.file_size(name+".bin")
 g = fd.segment(oip,dip,name+".bin")
 print(g)
+#los primeros 232 bits son el header
 for i in g:
     print(fd.bin_to_str(i[:240]))

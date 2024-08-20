@@ -1,5 +1,6 @@
 import os
 import random
+import math
 #Aquí se crearan las funciones para la simulacion de errores y envio de datos al servidor
 
 #Funcion para crear archivos txt con la información del usuario
@@ -24,11 +25,11 @@ def txt_to_bin(input_txt_path, output_bin_path):
     
     # Convertir el contenido a binario
     binary_data = text_data.encode('utf-8')
-    print(binary_data)
+    #print(binary_data)
 
     # Convierte cada byte a su representación binaria
     binario = ''.join(format(byte, '08b') for byte in binary_data)
-    print(binario)
+    #print(binario)
     
     # Guardar los datos binarios en un nuevo archivo .bin
     with open(output_bin_path, 'w') as bin_file:
@@ -38,8 +39,9 @@ def txt_to_bin(input_txt_path, output_bin_path):
 #Esta funcion crear un texto a binario, si la opcion es 0 sabra que es una ip y quitara los . del texto recibido
 def create_binary(o,dato):
     if o == 0:
-       num =dato.split(".")
-       binario = "".join([format(i,"08b") for i in num])
+       num = dato.split(".")
+       binario = "".join([format(int(i),"08b") for i in num])
+       return binario
     else:
        binary_data = dato.encode('utf-8')
        binario = ''.join(format(byte, '08b') for byte in binary_data)
@@ -52,31 +54,27 @@ def str_to_bin(text):
    binario = ''.join(format(byte, '08b') for byte in binary_data)
    return binario
 
+#funcion que revierte bits a texto
+def bin_to_str(binary_data):
+    # Dividimos la cadena binaria en segmentos de 8 bits
+    byte_array = [binary_data[i:i+8] for i in range(0, len(binary_data), 8)]
+    
+    # Convertimos cada segmento de 8 bits a su valor decimal y los unimos en un byte array
+    text = ''.join([chr(int(byte, 2)) for byte in byte_array])
+    
+    return text
+
 #Función que estima el peso de un archivo y define en cuantas tramas se dividirá
 def file_size(file_name):
-  data_size = file_size = os.path.getsize(file_name)
+  data_size = os.path.getsize(file_name)/8
+  print(data_size)
   segmentos = data_size/1024
   with open(file_name, 'r') as data:
     text_data = data.read()
     data = [text_data[i:i + 8] for i in range(0, len(text_data), 8)]
     return segmentos,data
   
-#Función que separa el archivo .bin en segmentos más pequeños para poder simular la segmentación del proceso TCP/IP
-#Se asume que el dispositivo que se tiene solo puede enviar maximo 1024 bits y se tiene que dividir el archivo en la cantidad
-#de segmentos necesarios para satisfacer los requerimientos.
 
-def segmentos(file_name):
-   seg,data= file_size(file_name)
-   i = 0
-   while i < len(data):
-      if (i+8) < len(data):
-        segmento = "".join(data[i:i+8])
-        i += 9
-      else:
-        segmento = "".join(data[i:])
-   head = "" #aqui se deberia llamar a la funcion que genera el header
-   segmento = head + segmento
-   return segmento
 
 #funcion que permite calcular el checksum del segmento de datos
 def calcularChecksum(datos):
@@ -90,7 +88,7 @@ def calcularChecksum(datos):
 
   for i in range(0, len(datos), 2):
     #Combinar dos bytes en una palabra de 16 bits
-    palabra_16bits = (datos[i] << 8) + datos[i + 1]
+    palabra_16bits = (int(datos[i]) << 8) + int(datos[i + 1])
     suma += palabra_16bits
         
     #Añadir el acarreo si la suma es mayor que 0xFFFF
@@ -98,8 +96,11 @@ def calcularChecksum(datos):
 
   #se toma el complemento a 1
   checksum = ~suma & 0xFFFF
-    
-  return checksum
+
+   # Convertir el checksum a binario de 16 bits
+  checksum_binario = format(checksum, '016b')
+  print(checksum_binario)  
+  return checksum_binario
 
 # funcion que valida los checksum, el del mensaje y el que se genera
 def validar_checksum(datos, checksum_recibido):
@@ -114,15 +115,43 @@ def validar_checksum(datos, checksum_recibido):
 def t_header(oip,dip,sec,trama):
    #los datos hay que convertirlos a binario
    sport= create_binary(0,oip)
-   dport=create_binary(0,dip)
+   dport= create_binary(0,dip)
    check = calcularChecksum(trama)
-   sec_bin = format(sec,"032b")
+   sec_bin = format(int(sec),"08b")
 
    #formato del header 
-   header= sport + dport + sec_bin + check
+   header= sport + dport + str(sec_bin) + str(check)
    
    return header
 
+#Función que separa el archivo .bin en segmentos más pequeños para poder simular la segmentación del proceso TCP/IP
+#Se asume que el dispositivo que se tiene solo puede enviar maximo 1024 bits y se tiene que dividir el archivo en la cantidad
+#de segmentos necesarios para satisfacer los requerimientos.
+
+def segmentos(oip,dip,file_name):
+   seg,data= file_size(file_name)
+   i = 0
+   seg = math.floor(seg) + 1
+   segmento = ""
+   head = ""
+   info = []
+   if len(data) > 1024:
+    for i in range(seg): 
+      lista = [h for h in range(0,len(data),1024)]
+      print(lista)
+      for j in lista:
+          if (j+1023) < len(data):
+            segmento = "".join(data[j:j+1023])
+          else:
+            segmento = "".join(data[j:])
+   else:
+    segmento = "".join(data[:])  
+   head = t_header(oip,dip,i,segmento)#aqui se deberia llamar a la funcion que genera el header
+   segmento = head + segmento
+   #print(segmento)
+   info.append(segmento)
+   return segmento
+   
 #Función que simula un envío fuera de orden, se envía la lista de segmentos
 def simularErrorFueraOrden (segmentos):
    return random.shuffle (segmentos)

@@ -56,7 +56,8 @@ r = "".join(datos_errados)
 print(fd.bin_to_str(r))
 orden = [fd.bin_to_str(i[184:192]) for i in datos_errados]
 checksums = [fd.bin_to_str(i[192:232]) for i in datos_errados]
-print(orden,checksums)
+total = [fd.bin_to_str(i[-8:]) for i in datos_errados]
+print(orden,checksums,total)
 
 #name = fd.create_txt()
 #name = name.split(".")[0]

@@ -171,7 +171,7 @@ def segment(oip, dip, file_name):
             print(f"Encabezado {j // 1024}: {head}")
             
             # Agregar el segmento + encabezado a la lista info
-            info.append(head + segmento)
+            info.append(head + segmento + str_to_bin(seg))
     
     else:
         segmento = "".join(data)

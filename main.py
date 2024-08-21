@@ -57,6 +57,26 @@ print(fd.bin_to_str(r))
 orden = [fd.bin_to_str(i[184:192]) for i in datos_errados]
 checksums = [fd.bin_to_str(i[192:232]) for i in datos_errados]
 total = [fd.bin_to_str(i[-8:]) for i in datos_errados]
+orden_real = [str(i) for i in range(int(total[0]))]
+tramas =  [fd.bin_to_str(i[233:-8]) for i in datos_errados]
+print(orden,checksums,total,orden_real,tramas)
+print("Validación de errores")
+if orden == orden_real:
+    print("Los segmentos se enviaron en orden y completos")
+elif not orden == orden_real:
+    print("Los no segmentos se enviaron en orden")
+elif len(orden) < len(orden_real):
+    print("Hubo perdida de paquetes")
+elif len(orden) == len(orden_real):
+    print("Los paquetes llegaron completos")
+else: 
+    print("Los segmentos llegaron en orden y completos")
+for i in range(len(tramas)):
+    print("Trama #{}".format(str(i+1)))
+    trama_r = fd.str_to_bin(tramas[i])
+    checksum = fd.validar_checksum(trama_r,checksums[i])
+    if not checksum:
+        print("La trama tiene error de cambio de bits")
 print(orden,checksums,total)
 
 #name = fd.create_txt()

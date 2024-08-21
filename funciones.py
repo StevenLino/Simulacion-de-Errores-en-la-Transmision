@@ -116,7 +116,7 @@ def calcularChecksum(datos):
 
    # Convertir el checksum a binario de 16 bits
   checksum_binario = str_to_bin(checksum)#format(checksum, '016b')
-  print(checksum_binario)  
+  #print(checksum_binario)  
   return checksum_binario
 
 # funcion que valida los checksum, el del mensaje y el que se genera

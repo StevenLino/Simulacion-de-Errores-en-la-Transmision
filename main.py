@@ -40,6 +40,7 @@ else:
         datos = fd.segment(oip, dip, nombre_base + ".bin")  # Segmenta el archivo binario
     else:
         print("No se seleccionó ningún archivo.")
+
 datos_errados = []
 for i in datos:
     error = rd.randint(0,2) #Se escoje un error de entre los 3 que se creó 
@@ -53,6 +54,9 @@ for i in datos:
 print(datos_errados)
 r = "".join(datos_errados)
 print(fd.bin_to_str(r))
+orden = [fd.bin_to_str(i[184:192]) for i in datos_errados]
+checksums = [fd.bin_to_str(i[192:232]) for i in datos_errados]
+print(orden,checksums)
 
 #name = fd.create_txt()
 #name = name.split(".")[0]

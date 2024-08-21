@@ -1,6 +1,8 @@
 import os
 import random
 import math
+import tkinter as tk
+from tkinter import filedialog
 #Aquí se crearan las funciones para la simulacion de errores y envio de datos al servidor
 
 #Funcion para crear archivos txt con la información del usuario
@@ -15,6 +17,18 @@ def create_txt():
   with open(name, 'w') as file:
         file.write(texto)
   return name
+
+def seleccionar_archivo():
+    # Crear la ventana principal (oculta)
+    root = tk.Tk()
+    root.withdraw()  # Ocultar la ventana principal
+
+    # Abrir el cuadro de diálogo para seleccionar un archivo
+    archivo = filedialog.askopenfilename(
+        title="Selecciona un archivo",
+        filetypes=[("Todos los archivos", "*.*"), ("Archivos de texto", "*.txt")]
+    )
+    return archivo
 
 #Función que convierte el archivo .txt del usuario a un archivo .bin para poder procesarlo.
 #Los archivos .bin son un tipo de archivo que contine informacion en formato binario.

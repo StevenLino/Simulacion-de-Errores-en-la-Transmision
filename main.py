@@ -52,14 +52,13 @@ for i in datos:
     elif error == 2: #Simula el error de cambio de bits en la trama
         datos_errados = fd.simularCambioBit(datos)
 print(datos_errados)
-r = "".join(datos_errados)
-print(fd.bin_to_str(r))
+
 orden = [fd.bin_to_str(i[184:192]) for i in datos_errados]
 checksums = [fd.bin_to_str(i[192:232]) for i in datos_errados]
 total = [fd.bin_to_str(i[-8:]) for i in datos_errados]
 orden_real = [str(i) for i in range(int(total[0]))]
-tramas =  [fd.bin_to_str(i[233:-8]) for i in datos_errados]
-print(orden,checksums,total,orden_real,tramas)
+tramas =  [fd.bin_to_str(i[232:-8]) for i in datos_errados]
+#print(orden,checksums,total,orden_real,tramas)
 print("Validación de errores")
 if orden == orden_real:
     print("Los segmentos se enviaron en orden y completos")
@@ -78,6 +77,11 @@ for i in range(len(tramas)):
     if not checksum:
         print("La trama tiene error de cambio de bits")
 print(orden,checksums,total)
+print(tramas)
+texto_final = "".join(datos_errados)
+#print(fd.bin_to_str(texto_final))
+with open(nombre_base+"_final.txt","w")as last_file:
+    last_file.write(fd.bin_to_str(texto_final))
 
 #name = fd.create_txt()
 #name = name.split(".")[0]

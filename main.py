@@ -1,6 +1,7 @@
 # Aquí estará el programa principal que usará las funciones del archivo def.pv y los documentos en este repositorio
 import funciones as fd
 import os
+import random as rd
 
 # Configuración de IPs
 oip = "192.168.1.10"  # IP de origen
@@ -25,7 +26,7 @@ if op == "1":
     name_base = os.path.splitext(name)[0]  # Extrae el nombre base sin extensión
     fd.txt_to_bin(name, name_base + ".bin")  # Convierte el archivo de texto a binario
     seg, data = fd.file_size(name_base + ".bin")  # Obtiene tamaño del archivo binario
-    g = fd.segment(oip, dip, name_base + ".bin")  # Segmenta el archivo binario
+    datos = fd.segment(oip, dip, name_base + ".bin")  # Segmenta el archivo binario
 else:
     # Seleccionar un archivo existente y convertirlo a binario
     print("Entró en la opción de seleccionar archivo")
@@ -36,12 +37,22 @@ else:
         print(nombre_base)
         fd.txt_to_bin(ruta, nombre_base + ".bin")  # Convierte el archivo de texto a binario
         seg, data = fd.file_size(nombre_base + ".bin")  # Obtiene tamaño del archivo binario
-        g = fd.segment(oip, dip, nombre_base + ".bin")  # Segmenta el archivo binario
+        datos = fd.segment(oip, dip, nombre_base + ".bin")  # Segmenta el archivo binario
     else:
         print("No se seleccionó ningún archivo.")
-
-
-
+datos_errados = []
+for i in datos:
+    error = rd.randint(0,2) #Se escoje un error de entre los 3 que se creó 
+    print(error)
+    if error == 0: # se generar un error de envio fuera de orden
+        datos_errados = fd.simularErrorFueraOrden(datos)
+    elif error == 1: #Se generar un error tipo perdida de paquetes
+        datos_errados = fd.simularErrorPerdidaPaquetes(datos)
+    elif error == 2: #Simula el error de cambio de bits en la trama
+        datos_errados = fd.simularCambioBit(datos)
+print(datos_errados)
+r = "".join(datos_errados)
+print(fd.bin_to_str(r))
 
 #name = fd.create_txt()
 #name = name.split(".")[0]

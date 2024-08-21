@@ -146,35 +146,6 @@ def t_header(oip,dip,sec,trama):
 #Se asume que el dispositivo que se tiene solo puede enviar maximo 1024 bits y se tiene que dividir el archivo en la cantidad
 #de segmentos necesarios para satisfacer los requerimientos.
 
-def segmentos(oip,dip,file_name):
-   seg,data= file_size(file_name)
-   i = 0
-   seg = math.floor(seg) + 1
-   #segmento = ""
-   #head = ""
-   info = []
-   if len(data) > 1024:
-    for i in range(seg): 
-      lista = [h for h in range(0,len(data),1024)]
-      print(lista)
-      for j in lista:
-          if (j+1023) < len(data):
-            segmento = "".join(data[j:j+1023])
-          else:
-            segmento = "".join(data[j:])
-      head = t_header(oip,dip,i,segmento)#aqui se deberia llamar a la funcion que genera el header
-      segmento = head + segmento
-      info.append(segmento)
-      segmento= ""
-   else:
-    segmento = "".join(data[:])
-    info.append(segmento)
-    head = t_header(oip,dip,i,segmento)#aqui se deberia llamar a la funcion que genera el header
-    segmento = head + segmento
-   
-   #print(segmento)
-   return info
-
 def segment(oip, dip, file_name):
     seg, data = file_size(file_name)
     seg = math.floor(seg) + 1
@@ -228,10 +199,10 @@ def simularErrorPerdidaPaquetes (segmentos):
 #Función que simula un cambio de bits del mensaje
 def simularCambioBit (segmentos):
   for i in range (len(segmentos)):
-      
+    prop = 0.001
     #Se da un 10% de posibilidad de que exista uno o varios cambios de bits en un segmento
-    if random.random() < 0.1:
-        segmento = bytearray(segmentos[i])
+    if random.random() < prop:
+        segmento = bytearray(segmentos[i].encode('utf-8'))
 
         #Se asume que se pueda realizar un cambio de bit de entre una y cinco veces
         for c in range (random.randint (1, 5)):
